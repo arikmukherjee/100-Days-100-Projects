@@ -1,1 +1,131 @@
 # All_Projects_in_One_Repository
+
+## Projects
+
+- 3 sorting in 1 code
+- 3D Gallery
+- 3D Boxes Background
+- Animated Countdown
+- Animated Navigation
+- Auto Text Effect
+- Background Slider
+- Blurry Loading
+- Button Ripple Effect
+- Calculator
+- Calender
+- Change Background Image on Scroll
+- Character Counter
+- Check Battery Percentage
+- Check Online-Offline Status
+- Check Speaker Sound
+- Check Typing Status
+- Clock
+- Color Card Flip
+- Content Placeholder
+- Timer App
+- Custom Range Slider
+- Dad Jokes
+- Discount Calculator
+- Display Documents
+- Double Click Heart
+- Double Vertical Slider
+- Drag N Drop
+- White App
+- Dream 2024 House
+- Drink Water
+- Event Keycodes
+- Expanding Cards
+- faq collapse
+- feedback ui design
+- Fibonacci Generator
+- Flipkart Clone
+- Flower animation using python
+- Food Order
+- Form Validation
+- Form input wave
+- Galaxy
+- GitHub Profile Finder
+- Good Cheap Fast Project Type
+- Happy New Year
+- Hidden Search
+- Hover Board
+- Image Changer
+- Image Carousel
+- Incrementing Counter
+- Insect Catch Game
+- Kinetic Loader
+- Live User Filter
+- Local Storage Database UI
+- Mobile Tag Navigation
+- Movable Div Container
+- Movie App
+- Spotify Music App
+- Netflix Mobile Navigation
+- Notes App
+- Notification Button
+- Account Verification Page
+- Password Generator
+- Password Strength Background
+- Piano
+- Pokedex
+- Progress Steps
+- Proposal Button
+- QR Code Generator
+- Quiz App
+- Random Choice Picker
+- Random Image Generator
+- RGB Color Generator
+- Rotating Nav Animation
+- Scroll Animation
+- Simple text editor
+- Sound Board
+- Speech To Text Convertor
+- Split Landing Page
+- Sticky Navigation
+- Stop Watch
+- Tap baby tap
+- Tea Cup
+- Temperature Converter
+- Testimonial Box Switcher
+- Text To Speech Convertor
+- Tic Tac Toe Game
+- To Do List App
+- Toast Notification
+- Weather App
+- Word Flashcard
+- Yart
+- GitHub Profile Finder App
+- Age Calculator
+- Birth Day Calculate
+- LinkedIn Profile Card
+- iPhone Store
+- Create a Login Form
+- Master Card
+- Responsive Contact Us Form
+- Search Box
+- Send Unexpected Messages
+- Online Course
+- Pong
+- Paint Clone
+- Math Sprint Game
+- Drag N Drop
+- Joke Teller
+- Quote Generator
+- NASA API Pictures
+- Spoke Rock Game
+- Music Player
+- Video Player
+- Splash Page
+- Light Dark Mode
+- Book Keeper
+- Animated Navigation
+- Button
+- Library Management System
+- Amazon clone
+- CRUD_Note_App
+- loginsystem
+- ChatGPT
+- Video Call Website
+- Linktree
+- iVoteOnline
+- Chat App
