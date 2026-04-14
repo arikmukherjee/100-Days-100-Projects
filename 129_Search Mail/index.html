@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Manager</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { text-align: center; }
+        .provider { margin-bottom: 30px; }
+        .provider h2 { border-bottom: 2px solid #333; padding-bottom: 5px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; cursor: pointer; }
+        th:hover { background-color: #ddd; }
+        .search { margin-bottom: 20px; text-align: center; }
+        .search input { padding: 10px; width: 300px; }
+        .add-form { margin-bottom: 20px; text-align: center; }
+        .add-form select, .add-form input, .add-form button { padding: 8px; margin: 5px; }
+        button { cursor: pointer; }
+        .toggle { background-color: #4CAF50; color: white; border: none; padding: 5px 10px; }
+        .delete { background-color: #f44336; color: white; border: none; padding: 5px 10px; }
+    </style>
+</head>
+<body>
+    <h1>Email Account Manager</h1>
+    <div class="search">
+        <input type="text" id="search" placeholder="Search emails...">
+    </div>
+    <div class="add-form">
+        <select id="provider-select">
+            <option value="gmail">Gmail</option>
+            <option value="outlook">Outlook</option>
+            <option value="hotmail">Hotmail</option>
+            <option value="yahoo">Yahoo</option>
+            <option value="aol">AOL</option>
+            <option value="protonmail">ProtonMail</option>
+            <option value="tuta">Tuta</option>
+            <option value="zoho">Zoho</option>
+            <option value="rediff">Rediff</option>
+            <option value="disabled">Disabled</option>
+        </select>
+        <input type="email" id="new-email" placeholder="Enter new email">
+        <button id="add-email">Add Email</button>
+    </div>
+
+    <div id="content">
+        <!-- Gmail -->
+        <div class="provider" data-provider="gmail">
+            <h2>Gmail Accounts</h2>
+            <table>
+                <thead>
+                    <tr><th>Email</th><th>Status</th><th>Actions</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>a6638150@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arik.academic@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arik.cs.dept@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arik.ddmc.cs@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arik.ju.cs@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arik.me.cs@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arik.me.cse@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arik.wbsu.cs@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arik15.11.2003@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee.ai@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee.app@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee.asn@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee.aws@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee.bhs@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee.business@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee.code@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee.coding@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee.computerscience@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee.contact@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee.cs.department@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee.ddmc@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee.developer@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee.edu@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee.education@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee.iit@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee.info@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee.ios@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee.ju@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee.mathematics@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee.mca@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee.mphil@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee.msc@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee.mtech@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee.online@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee.phd@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee.physics@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee.pvt.acc@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee.recovery.mail@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee.science@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee.tcs@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee.try@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee.uhnav@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee.univ@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee.wbsu@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee.work@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee1@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee10@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee11@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee12@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee1234@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee13@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee14@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee15.11.2003@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee197@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee2007@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee2024@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee3@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee37@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee4@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee404@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee5@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee543@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee7@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee717@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee7439711367@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee8334014218@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee9@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjeecs@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjeecse@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arupmukherjee.official@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arupmukherjee.online@gmail.com</td><td>Active</td></tr>
+                    <tr><td>arupmukherjee834@gmail.com</td><td>Active</td></tr>
+                    <tr><td>asishhalder1972@gmail.com</td><td>Active</td></tr>
+                    <tr><td>codeverse.net@gmail.com</td><td>Active</td></tr>
+                    <tr><td>crackgate27@gmail.com</td><td>Active</td></tr>
+                    <tr><td>crackjeca@gmail.com</td><td>Active</td></tr>
+                    <tr><td>dr.arikmukherjee@gmail.com</td><td>Active</td></tr>
+                    <tr><td>elshaddai.since.1999@gmail.com</td><td>Active</td></tr>
+                    <tr><td>iarikmukherjee@gmail.com</td><td>Active</td></tr>
+                    <tr><td>iirs.isro.india@gmail.com</td><td>Active</td></tr>
+                    <tr><td>jecapreperation@gmail.com</td><td>Active</td></tr>
+                    <tr><td>lab.of.computer.science@gmail.com</td><td>Active</td></tr>
+                    <tr><td>mukherjee.arik.cs@gmail.com</td><td>Active</td></tr>
+                    <tr><td>mukherjee.arik.cse@gmail.com</td><td>Active</td></tr>
+                    <tr><td>officialarikmukherjee@gmail.com</td><td>Active</td></tr>
+                    <tr><td>portalonlinevoting@gmail.com</td><td>Active</td></tr>
+                    <tr><td>prof.arikmukherjee@gmail.com</td><td>Active</td></tr>
+                    <tr><td>rubimukherjee.asn@gmail.com</td><td>Active</td></tr>
+                    <tr><td>rubimukherjee.official@gmail.com</td><td>Active</td></tr>
+                    <tr><td>rubimukherjee.online@gmail.com</td><td>Active</td></tr>
+                    <tr><td>rubimukherjee9230671134@gmail.com</td><td>Active</td></tr>
+                    <tr><td>scicomatics@gmail.com</td><td>Active</td></tr>
+                    <tr><td>thebiblestory66@gmail.com</td><td>Active</td></tr>
+                    <tr><td>thesyncoder@gmail.com</td><td>Active</td></tr>
+                    <tr><td>wbsumsccs@gmail.com</td><td>Active</td></tr>
+                    <tr><td>yoursourcecode.in@gmail.com</td><td>Active</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Outlook -->
+        <div class="provider" data-provider="outlook">
+            <h2>Outlook Accounts</h2>
+            <table>
+                <thead>
+                    <tr><th>Email</th><th>Status</th><th>Actions</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>arik-mukherjee@outlook.com</td><td>Active</td></tr>
+                    <tr><td>arik_mukherjee@outlook.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjeecs@outlook.com</td><td>Active</td></tr>
+                    <tr><td>thisisarik@outlook.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee@outlook.in</td><td>Active</td></tr>
+                    <tr><td>arik_cs@outlook.com</td><td>Active</td></tr>
+                    <tr><td>arikcs@outlook.in</td><td>Active</td></tr>
+                    <tr><td>arikcs1@outlook.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee.edu@outlook.com</td><td>Active</td></tr>
+                    <tr><td>arik_cs@outlook.in</td><td>Active</td></tr>
+                    <tr><td>gate.cse@outlook.com</td><td>Active</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Hotmail -->
+        <div class="provider" data-provider="hotmail">
+            <h2>Hotmail Accounts</h2>
+            <table>
+                <thead>
+                    <tr><th>Email</th><th>Status</th><th>Actions</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>arik-mukherjee@hotmail.com</td><td>Active</td></tr>
+                    <tr><td>arik.mukherjee@hotmail.com</td><td>Active</td></tr>
+                    <tr><td>arik_mukherjee@hotmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjeecs@hotmail.com</td><td>Active</td></tr>
+                    <tr><td>arik_cs@hotmail.com</td><td>Active</td></tr>
+                    <tr><td>arup-mukherjee@hotmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee.edu@hotmail.com</td><td>Disabled</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Yahoo -->
+        <div class="provider" data-provider="yahoo">
+            <h2>Yahoo Accounts</h2>
+            <table>
+                <thead>
+                    <tr><th>Email</th><th>Status</th><th>Actions</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>arikcs@myyahoo.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee@yahoo.com</td><td>Active</td></tr>
+                    <tr><td>arikcs@yahoo.com</td><td>Active</td></tr>
+                    <tr><td>arik_mukherjee@yahoo.com</td><td>Active</td></tr>
+                    <tr><td>gate2027@myyahoo.com</td><td>Active</td></tr>
+                    <tr><td>rubimukherjee@myyahoo.com</td><td>Active</td></tr>
+                    <tr><td>arupmukherjee@myyahoo.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee@myyahoo.com</td><td>Active</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- AOL -->
+        <div class="provider" data-provider="aol">
+            <h2>AOL Accounts</h2>
+            <table>
+                <thead>
+                    <tr><th>Email</th><th>Status</th><th>Actions</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>arikcs@aol.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee@aol.com</td><td>Active</td></tr>
+                    <tr><td>arik_mukherjee@aol.com</td><td>Active</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- ProtonMail -->
+        <div class="provider" data-provider="protonmail">
+            <h2>ProtonMail Accounts</h2>
+            <table>
+                <thead>
+                    <tr><th>Email</th><th>Status</th><th>Actions</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>arikcs@protonmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee@proton.me</td><td>Active</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Tuta -->
+        <div class="provider" data-provider="tuta">
+            <h2>Tuta Accounts</h2>
+            <table>
+                <thead>
+                    <tr><th>Email</th><th>Status</th><th>Actions</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>arikmukherjee@tuta.io</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee@tutanota.de</td><td>Active</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Zoho -->
+        <div class="provider" data-provider="zoho">
+            <h2>Zoho Accounts</h2>
+            <table>
+                <thead>
+                    <tr><th>Email</th><th>Status</th><th>Actions</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>arikmukherjee@zohomail.in</td><td>Active</td></tr>
+                    <tr><td>arik_cs@zohomail.in</td><td>Active</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Rediff -->
+        <div class="provider" data-provider="rediff">
+            <h2>Rediff Accounts</h2>
+            <table>
+                <thead>
+                    <tr><th>Email</th><th>Status</th><th>Actions</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>arik_mukherjee@rediffmail.com</td><td>Active</td></tr>
+                    <tr><td>arikcs@rediffmail.com</td><td>Active</td></tr>
+                    <tr><td>arikm@rediffmail.com</td><td>Active</td></tr>
+                    <tr><td>arikmukherjee@rediffmail.com</td><td>Active</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Disabled -->
+        <div class="provider" data-provider="disabled">
+            <h2>Disabled Accounts</h2>
+            <table>
+                <thead>
+                    <tr><th>Email</th><th>Status</th><th>Actions</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>rubimukherjee2022@gmail.com</td><td>Disabled</td></tr>
+                    <tr><td>arikmukherjee2@gmail.com</td><td>Disabled</td></tr>
+                    <tr><td>arikmukherjee00@gmail.com</td><td>Disabled</td></tr>
+                    <tr><td>arikmukherjee2022@gmail.com</td><td>Disabled</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Aliases -->
+        <div class="provider" data-provider="aliases">
+            <h2>Email Aliases</h2>
+            <table>
+                <thead>
+                    <tr><th>Main Email</th><th>Alias</th><th>Actions</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>crackgate27@gmail.com</td><td>gate.cse@outlook.com</td></tr>
+                    <tr><td>arikmukherjee.edu@gmail.com</td><td>arikmukherjee.edu@outlook.com</td></tr>
+                    <tr><td>arikmukherjee3@gmail.com</td><td>arikcs1@outlook.com</td></tr>
+                    <tr><td>arikmukherjee3@gmail.com</td><td>arik_cs@outlook.in</td></tr>
+                    <tr><td>a6638150@gmail.com</td><td>arikcs@outlook.in</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Load data from localStorage or use default
+        let emailData = JSON.parse(localStorage.getItem('emailData')) || {};
+
+        // Function to save data
+        function saveData() {
+            localStorage.setItem('emailData', JSON.stringify(emailData));
+        }
+
+        // Function to add buttons to rows
+        function addButtons() {
+            const rows = document.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                if (!row.querySelector('.toggle')) {
+                    const actionsTd = document.createElement('td');
+                    const toggleBtn = document.createElement('button');
+                    toggleBtn.textContent = 'Toggle';
+                    toggleBtn.className = 'toggle';
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.textContent = 'Delete';
+                    deleteBtn.className = 'delete';
+                    actionsTd.appendChild(toggleBtn);
+                    actionsTd.appendChild(deleteBtn);
+                    row.appendChild(actionsTd);
+                }
+            });
+        }
+
+        // Add buttons on load
+        addButtons();
+
+        // Search functionality
+        const searchInput = document.getElementById('search');
+        const providers = document.querySelectorAll('.provider');
+
+        searchInput.addEventListener('input', function() {
+            const query = this.value.toLowerCase();
+            providers.forEach(provider => {
+                const rows = provider.querySelectorAll('tbody tr');
+                let providerVisible = false;
+                rows.forEach(row => {
+                    const cells = row.querySelectorAll('td');
+                    let rowVisible = false;
+                    cells.forEach(cell => {
+                        if (cell.textContent.toLowerCase().includes(query)) {
+                            rowVisible = true;
+                        }
+                    });
+                    row.style.display = rowVisible ? '' : 'none';
+                    if (rowVisible) providerVisible = true;
+                });
+                provider.style.display = providerVisible ? 'block' : 'none';
+            });
+        });
+
+        // Add email functionality
+        document.getElementById('add-email').addEventListener('click', function() {
+            const provider = document.getElementById('provider-select').value;
+            const email = document.getElementById('new-email').value.trim();
+            if (email) {
+                const providerDiv = document.querySelector(`[data-provider="${provider}"]`);
+                const tbody = providerDiv.querySelector('tbody');
+                const newRow = document.createElement('tr');
+                newRow.innerHTML = `<td>${email}</td><td>Active</td><td><button class="toggle">Toggle</button> <button class="delete">Delete</button></td>`;
+                tbody.appendChild(newRow);
+                document.getElementById('new-email').value = '';
+                // Save to data
+                if (!emailData[provider]) emailData[provider] = [];
+                emailData[provider].push({email: email, status: 'Active'});
+                saveData();
+            }
+        });
+
+        // Event delegation for toggle and delete
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('toggle')) {
+                const row = e.target.closest('tr');
+                const statusTd = row.querySelector('td:nth-child(2)');
+                statusTd.textContent = statusTd.textContent === 'Active' ? 'Disabled' : 'Active';
+                // Update data
+                const provider = row.closest('.provider').dataset.provider;
+                const email = row.querySelector('td:first-child').textContent;
+                if (emailData[provider]) {
+                    const item = emailData[provider].find(i => i.email === email);
+                    if (item) item.status = statusTd.textContent;
+                    saveData();
+                }
+            } else if (e.target.classList.contains('delete')) {
+                const row = e.target.closest('tr');
+                const provider = row.closest('.provider').dataset.provider;
+                const email = row.querySelector('td:first-child').textContent;
+                row.remove();
+                // Update data
+                if (emailData[provider]) {
+                    emailData[provider] = emailData[provider].filter(i => i.email !== email);
+                    saveData();
+                }
+            }
+        });
+
+        // Sort functionality
+        document.addEventListener('click', function(e) {
+            if (e.target.tagName === 'TH') {
+                const table = e.target.closest('table');
+                const tbody = table.querySelector('tbody');
+                const rows = Array.from(tbody.querySelectorAll('tr'));
+                const index = Array.from(e.target.parentNode.children).indexOf(e.target);
+                rows.sort((a, b) => {
+                    const aText = a.children[index].textContent.toLowerCase();
+                    const bText = b.children[index].textContent.toLowerCase();
+                    return aText.localeCompare(bText);
+                });
+                rows.forEach(row => tbody.appendChild(row));
+            }
+        });
+    </script>
+</body>
+</html>
