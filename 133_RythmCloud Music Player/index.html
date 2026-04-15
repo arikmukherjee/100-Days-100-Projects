@@ -1,0 +1,1282 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RhythmCloud — Music Player</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0a0a0f;
+        --surface: #111118;
+        --glass: rgba(255, 255, 255, 0.06);
+        --glass-b: rgba(255, 255, 255, 0.1);
+        --border: rgba(255, 255, 255, 0.1);
+        --text: #f0f0f5;
+        --muted: rgba(240, 240, 245, 0.5);
+        --accent: #a78bfa;
+        --accent2: #60a5fa;
+        --accent3: #f472b6;
+        --hit: rgba(167, 139, 250, 0.15);
+        --radius: 16px;
+        --radius-sm: 10px;
+        --trans: 0.25s ease;
+        --grad1: #a78bfa;
+        --grad2: #60a5fa;
+        --grad3: #f472b6;
+      }
+      [data-theme="light"] {
+        --bg: #f4f3ff;
+        --surface: #ffffff;
+        --glass: rgba(255, 255, 255, 0.7);
+        --glass-b: rgba(255, 255, 255, 0.9);
+        --border: rgba(0, 0, 0, 0.1);
+        --text: #1a1a2e;
+        --muted: rgba(26, 26, 46, 0.5);
+        --hit: rgba(167, 139, 250, 0.2);
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        font-family: "DM Sans", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+        overflow-x: hidden;
+        transition:
+          background var(--trans),
+          color var(--trans);
+      }
+      #bg-canvas {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+      }
+      .app {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        grid-template-columns: 260px 1fr 320px;
+        grid-template-rows: auto 1fr;
+        min-height: 100vh;
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 1.5rem;
+        gap: 1.25rem;
+      }
+      @media (max-width: 1024px) {
+        .app {
+          grid-template-columns: 1fr;
+          grid-template-rows: auto;
+        }
+        .sidebar {
+          display: none;
+        }
+        .lyrics-col {
+          display: none;
+        }
+        .lyrics-col.active {
+          display: block;
+        }
+      }
+      @media (max-width: 640px) {
+        .app {
+          padding: 1rem;
+          gap: 1rem;
+        }
+      }
+      .topbar {
+        grid-column: 1/-1;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.5rem 0;
+      }
+      .logo {
+        font-family: "Syne", sans-serif;
+        font-weight: 800;
+        font-size: 1.3rem;
+        background: linear-gradient(135deg, var(--grad1), var(--grad2));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        letter-spacing: -0.02em;
+      }
+      .topbar-actions {
+        display: flex;
+        gap: 0.75rem;
+        align-items: center;
+      }
+      .icon-btn {
+        background: var(--glass);
+        border: 1px solid var(--border);
+        color: var(--text);
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition:
+          background var(--trans),
+          transform var(--trans);
+        font-size: 1rem;
+        backdrop-filter: blur(12px);
+      }
+      .icon-btn:hover {
+        background: var(--glass-b);
+        transform: scale(1.05);
+      }
+      .sidebar {
+        grid-row: 2;
+        background: var(--glass);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        backdrop-filter: blur(20px);
+        padding: 1.25rem;
+        overflow-y: auto;
+        max-height: calc(100vh - 120px);
+      }
+      .sidebar h3 {
+        font-family: "Syne", sans-serif;
+        font-size: 0.75rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 1rem;
+      }
+      .playlist-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.6rem 0.75rem;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        transition: background var(--trans);
+        margin-bottom: 0.25rem;
+      }
+      .playlist-item:hover {
+        background: var(--hit);
+      }
+      .playlist-item.active {
+        background: var(--hit);
+        border-left: 3px solid var(--accent);
+      }
+      .playlist-thumb {
+        width: 44px;
+        height: 44px;
+        border-radius: 8px;
+        object-fit: cover;
+        flex-shrink: 0;
+        background: linear-gradient(135deg, var(--grad1), var(--grad3));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+        overflow: hidden;
+      }
+      .playlist-thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 8px;
+      }
+      .playlist-info {
+        flex: 1;
+        min-width: 0;
+      }
+      .playlist-title {
+        font-size: 0.85rem;
+        font-weight: 500;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .playlist-artist {
+        font-size: 0.75rem;
+        color: var(--muted);
+      }
+      .pl-dur {
+        font-size: 0.75rem;
+        color: var(--muted);
+        flex-shrink: 0;
+      }
+      .player-col {
+        grid-row: 2;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .player-card {
+        background: var(--glass);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        backdrop-filter: blur(24px);
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.5rem;
+        position: relative;
+        overflow: hidden;
+      }
+      .player-card::before {
+        content: "";
+        position: absolute;
+        inset: -1px;
+        border-radius: var(--radius);
+        background: linear-gradient(
+          135deg,
+          rgba(167, 139, 250, 0.15),
+          rgba(96, 165, 250, 0.08),
+          rgba(244, 114, 182, 0.12)
+        );
+        z-index: 0;
+        pointer-events: none;
+      }
+      .player-card > * {
+        position: relative;
+        z-index: 1;
+      }
+      .album-art {
+        width: 200px;
+        height: 200px;
+        border-radius: 20px;
+        background: linear-gradient(135deg, var(--grad1), var(--grad3));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 4rem;
+        box-shadow: 0 24px 48px rgba(0, 0, 0, 0.4);
+        transition: transform 0.4s ease;
+        overflow: hidden;
+        flex-shrink: 0;
+      }
+      .album-art.spinning {
+        animation: spin-slow 8s linear infinite;
+      }
+      @keyframes spin-slow {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      .album-art img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 20px;
+      }
+      .song-meta {
+        text-align: center;
+        width: 100%;
+      }
+      .song-title {
+        font-family: "Syne", sans-serif;
+        font-weight: 700;
+        font-size: 1.35rem;
+        letter-spacing: -0.02em;
+        margin-bottom: 0.2rem;
+      }
+      .song-artist {
+        font-size: 0.9rem;
+        color: var(--muted);
+      }
+      .song-album {
+        font-size: 0.78rem;
+        color: var(--muted);
+        margin-top: 0.15rem;
+      }
+      .progress-wrap {
+        width: 100%;
+      }
+      .progress-bar {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 100%;
+        height: 4px;
+        background: var(--glass-b);
+        border-radius: 4px;
+        cursor: pointer;
+        outline: none;
+        border: none;
+        position: relative;
+      }
+      .progress-bar::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--accent);
+        cursor: pointer;
+        box-shadow: 0 0 8px var(--accent);
+        transition: transform var(--trans);
+      }
+      .progress-bar::-webkit-slider-thumb:hover {
+        transform: scale(1.3);
+      }
+      .progress-bar::-webkit-slider-runnable-track {
+        height: 4px;
+        border-radius: 4px;
+        background: linear-gradient(
+          to right,
+          var(--accent) var(--prog, 0%),
+          var(--glass-b) var(--prog, 0%)
+        );
+      }
+      .time-row {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 0.4rem;
+      }
+      .time-row span {
+        font-size: 0.75rem;
+        color: var(--muted);
+        font-variant-numeric: tabular-nums;
+      }
+      .controls {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+      }
+      .ctrl-btn {
+        background: var(--glass);
+        border: 1px solid var(--border);
+        color: var(--text);
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all var(--trans);
+        backdrop-filter: blur(8px);
+      }
+      .ctrl-btn.sm {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+      }
+      .ctrl-btn.lg {
+        width: 56px;
+        height: 56px;
+        font-size: 1.4rem;
+        background: var(--accent);
+        border-color: var(--accent);
+        color: #fff;
+      }
+      .ctrl-btn.sm:hover {
+        background: var(--hit);
+        transform: scale(1.05);
+      }
+      .ctrl-btn.lg:hover {
+        opacity: 0.85;
+        transform: scale(1.05);
+      }
+      .ctrl-btn.active-mode {
+        color: var(--accent);
+      }
+      .volume-row {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        width: 100%;
+      }
+      .vol-icon {
+        color: var(--muted);
+        font-size: 0.9rem;
+        flex-shrink: 0;
+      }
+      .vol-slider {
+        -webkit-appearance: none;
+        appearance: none;
+        flex: 1;
+        height: 3px;
+        background: var(--glass-b);
+        border-radius: 4px;
+        outline: none;
+        border: none;
+        cursor: pointer;
+      }
+      .vol-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: var(--accent2);
+        cursor: pointer;
+      }
+      .vol-slider::-webkit-slider-runnable-track {
+        height: 3px;
+        border-radius: 4px;
+        background: linear-gradient(
+          to right,
+          var(--accent2) var(--vol, 80%),
+          var(--glass-b) var(--vol, 80%)
+        );
+      }
+      .waveform {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 3px;
+        height: 32px;
+        width: 100%;
+      }
+      .waveform.idle .bar {
+        animation: none;
+        height: 3px;
+      }
+      .bar {
+        width: 3px;
+        border-radius: 3px;
+        background: linear-gradient(to top, var(--accent), var(--accent2));
+        animation: wave 1.2s ease-in-out infinite;
+        transform-origin: bottom;
+        opacity: 0.7;
+      }
+      @keyframes wave {
+        0%,
+        100% {
+          height: 4px;
+          opacity: 0.5;
+        }
+        50% {
+          height: 28px;
+          opacity: 1;
+        }
+      }
+      .lyrics-col {
+        grid-row: 2;
+        background: var(--glass);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        backdrop-filter: blur(20px);
+        padding: 1.5rem;
+        overflow-y: auto;
+        max-height: calc(100vh - 120px);
+        scroll-behavior: smooth;
+      }
+      .lyrics-col h3 {
+        font-family: "Syne", sans-serif;
+        font-size: 0.75rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 1.5rem;
+      }
+      .lyric-line {
+        font-size: 1rem;
+        line-height: 1.7;
+        color: var(--muted);
+        padding: 0.35rem 0.5rem;
+        border-radius: 6px;
+        cursor: default;
+        transition: all 0.3s ease;
+        transform-origin: left;
+        will-change: transform, color, opacity;
+      }
+      .lyric-line.active {
+        color: var(--text);
+        font-size: 1.15rem;
+        font-weight: 500;
+        background: var(--hit);
+        padding: 0.45rem 0.75rem;
+      }
+      .lyric-line.past {
+        opacity: 0.35;
+      }
+      .no-lyrics {
+        color: var(--muted);
+        text-align: center;
+        margin-top: 3rem;
+        font-size: 0.95rem;
+      }
+      .mobile-toggle {
+        display: none;
+        grid-column: 1/-1;
+        gap: 0.5rem;
+      }
+      @media (max-width: 1024px) {
+        .mobile-toggle {
+          display: flex;
+        }
+      }
+      .tab-btn {
+        flex: 1;
+        padding: 0.55rem;
+        border-radius: var(--radius-sm);
+        background: var(--glass);
+        border: 1px solid var(--border);
+        color: var(--muted);
+        cursor: pointer;
+        font-size: 0.85rem;
+        transition: all var(--trans);
+        font-family: "DM Sans", sans-serif;
+      }
+      .tab-btn.active {
+        background: var(--hit);
+        color: var(--text);
+        border-color: var(--accent);
+      }
+      ::-webkit-scrollbar {
+        width: 5px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--border);
+        border-radius: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="bg-canvas"></canvas>
+    <div class="app">
+      <div class="topbar">
+        <div class="logo">&#9835; RhythmCloud</div>
+        <div class="topbar-actions">
+          <input
+            type="file"
+            id="song-upload"
+            accept=".mp3,audio/*"
+            multiple
+            hidden
+          />
+          <button class="icon-btn" id="upload-btn" title="Upload songs">
+            +
+          </button>
+          <button class="icon-btn" id="theme-btn" title="Toggle theme">
+            &#9788;
+          </button>
+        </div>
+      </div>
+      <div class="mobile-toggle">
+        <button class="tab-btn active" data-tab="player">Player</button>
+        <button class="tab-btn" data-tab="lyrics">Lyrics</button>
+        <button class="tab-btn" data-tab="playlist">Playlist</button>
+      </div>
+      <aside class="sidebar" id="sidebar">
+        <h3>Up Next</h3>
+        <div id="playlist"></div>
+      </aside>
+      <main class="player-col" id="player-col">
+        <div class="player-card">
+          <div class="album-art" id="album-art">
+            <span id="album-emoji">&#127925;</span>
+          </div>
+          <div class="song-meta">
+            <div class="song-title" id="song-title">Select a Song</div>
+            <div class="song-artist" id="song-artist">Artist</div>
+            <div class="song-album" id="song-album">Album</div>
+          </div>
+          <div class="waveform idle" id="waveform"></div>
+          <div class="progress-wrap">
+            <input
+              type="range"
+              class="progress-bar"
+              id="progress"
+              value="0"
+              min="0"
+              max="100"
+              step="0.1"
+            />
+            <div class="time-row">
+              <span id="cur-time">0:00</span><span id="tot-time">0:00</span>
+            </div>
+          </div>
+          <div class="controls">
+            <button class="ctrl-btn sm" id="shuffle-btn" title="Shuffle">
+              &#9196;
+            </button>
+            <button class="ctrl-btn sm" id="prev-btn" title="Previous">
+              &#9198;
+            </button>
+            <button class="ctrl-btn lg" id="play-btn" title="Play/Pause">
+              &#9654;
+            </button>
+            <button class="ctrl-btn sm" id="next-btn" title="Next">
+              &#9197;
+            </button>
+            <button class="ctrl-btn sm" id="repeat-btn" title="Repeat">
+              &#8635;
+            </button>
+          </div>
+          <div class="volume-row">
+            <span class="vol-icon" id="vol-icon">&#128266;</span>
+            <input
+              type="range"
+              class="vol-slider"
+              id="volume"
+              value="80"
+              min="0"
+              max="100"
+              step="1"
+            />
+            <span
+              style="
+                font-size: 0.75rem;
+                color: var(--muted);
+                min-width: 28px;
+                text-align: right;
+              "
+              id="vol-val"
+              >80</span
+            >
+          </div>
+        </div>
+      </main>
+      <div class="lyrics-col" id="lyrics-col">
+        <h3>Lyrics</h3>
+        <div id="lyrics-container">
+          <p class="no-lyrics">Play a song to see lyrics.</p>
+        </div>
+      </div>
+    </div>
+    <audio id="audio"></audio>
+    <script>
+      const SONGS = [
+        {
+          title: "Neon Echoes",
+          artist: "The Synth Collective",
+          album: "Chromaspace",
+          emoji: "🌊",
+          gradient: ["#a78bfa", "#60a5fa"],
+          duration: 195,
+          lyrics: [
+            { t: 0, l: "♩ Instrumental intro..." },
+            { t: 5, l: "Drifting through the neon haze" },
+            { t: 9, l: "City lights blur my gaze" },
+            { t: 13, l: "Electric pulses in my veins" },
+            { t: 17, l: "Washing out the midnight pains" },
+            { t: 22, l: "" },
+            { t: 23, l: "Echoes calling from afar" },
+            { t: 27, l: "Every note a fallen star" },
+            { t: 31, l: "We are made of synthesized light" },
+            { t: 35, l: "Burning through the endless night" },
+            { t: 40, l: "" },
+            { t: 41, l: "🎵 In the neon glow" },
+            { t: 44, l: "Nowhere left to go" },
+            { t: 47, l: "Just the music and the flow" },
+            { t: 51, l: "Let it take you home" },
+            { t: 55, l: "" },
+            { t: 56, l: "Frequencies align" },
+            { t: 60, l: "Your hand touches mine" },
+            { t: 64, l: "Chasing down the ultraviolet" },
+            { t: 68, l: "Crossing every line" },
+            { t: 73, l: "" },
+            { t: 74, l: "🎵 In the neon glow" },
+            { t: 77, l: "Nowhere left to go" },
+            { t: 80, l: "Just the music and the flow" },
+            { t: 84, l: "Let it take you home" },
+            { t: 90, l: "" },
+            { t: 91, l: "♩ Bridge — synthesizer solo..." },
+            { t: 120, l: "" },
+            { t: 121, l: "We live inside the echo" },
+            { t: 125, l: "Of everything we've known" },
+            { t: 129, l: "The pulse becomes our heartbeat" },
+            { t: 133, l: "The rhythm takes us home" },
+            { t: 140, l: "" },
+            { t: 141, l: "🎵 In the neon glow (final)" },
+            { t: 145, l: "Nowhere left to go" },
+            { t: 149, l: "Just the music and the flow" },
+            { t: 153, l: "Let it take you home" },
+            { t: 158, l: "Let it take you hoooome..." },
+            { t: 165, l: "" },
+            { t: 166, l: "♩ Outro fade..." },
+            { t: 195, l: "" },
+          ],
+        },
+        {
+          title: "Solstice Bloom",
+          artist: "Aurora Hayes",
+          album: "Wildflower EP",
+          emoji: "🌸",
+          gradient: ["#f472b6", "#fb923c"],
+          duration: 180,
+          lyrics: [
+            { t: 0, l: "♩ Gentle acoustic guitar..." },
+            { t: 6, l: "Morning light on your windowsill" },
+            { t: 10, l: "Coffee steam rising, the world still still" },
+            { t: 14, l: "You are reading last night's unread words" },
+            { t: 18, l: "Soft as petals, light as hummingbirds" },
+            { t: 23, l: "" },
+            { t: 24, l: "Solstice blooms in the garden of June" },
+            { t: 29, l: "We are dancing beneath the wild moon" },
+            { t: 33, l: "Every season we find a new way" },
+            { t: 37, l: "To grow into the light of the day" },
+            { t: 42, l: "" },
+            { t: 43, l: "🌸 Bloom, bloom" },
+            { t: 46, l: "Let the roots find their way" },
+            { t: 49, l: "Bloom, bloom" },
+            { t: 52, l: "Through the longest of days" },
+            { t: 56, l: "We are flowers in the fractures" },
+            { t: 60, l: "Turning sunward always" },
+            { t: 65, l: "" },
+            { t: 66, l: "Rivers bend but they don't break" },
+            { t: 70, l: "Every scar is love that stayed" },
+            { t: 74, l: "You held on through winter frost" },
+            { t: 78, l: "Counting every star we lost" },
+            { t: 83, l: "" },
+            { t: 84, l: "🌸 Bloom, bloom" },
+            { t: 87, l: "Let the roots find their way" },
+            { t: 90, l: "Bloom, bloom" },
+            { t: 93, l: "Through the longest of days" },
+            { t: 97, l: "We are flowers in the fractures" },
+            { t: 101, l: "Turning sunward always" },
+            { t: 107, l: "" },
+            { t: 108, l: "♩ Key change — strings enter..." },
+            { t: 130, l: "" },
+            { t: 131, l: "I will meet you at the solstice" },
+            { t: 136, l: "Where the light refuses to leave" },
+            { t: 141, l: "We will lay in the tall grass" },
+            { t: 146, l: "And simply, simply believe" },
+            { t: 152, l: "" },
+            { t: 153, l: "🌸 Bloom, bloom (reprise)" },
+            { t: 157, l: "Let the roots find their way" },
+            { t: 161, l: "Bloom, bloom — forever" },
+            { t: 165, l: "Through the longest of days..." },
+            { t: 173, l: "♩ Outro — guitar fades" },
+            { t: 180, l: "" },
+          ],
+        },
+        {
+          title: "Glass City Rain",
+          artist: "Hologram Twins",
+          album: "Fractures",
+          emoji: "🌧️",
+          gradient: ["#67e8f9", "#3b82f6"],
+          duration: 210,
+          lyrics: [
+            { t: 0, l: "♩ Lo-fi beat drops..." },
+            { t: 5, l: "Rain taps on the window glass" },
+            { t: 9, l: "Watching the old memories pass" },
+            { t: 13, l: "Every street a silver mirror" },
+            { t: 17, l: "Every face a little clearer" },
+            { t: 22, l: "" },
+            { t: 23, l: "You called from across the city" },
+            { t: 27, l: "Said you lost your sense of pretty" },
+            { t: 31, l: "I said the rain makes everything shine" },
+            { t: 35, l: "You said baby so do you, and so do I" },
+            { t: 41, l: "" },
+            { t: 42, l: "🌧️ Glass city rain" },
+            { t: 45, l: "Washing clean our names" },
+            { t: 48, l: "We are never the same" },
+            { t: 51, l: "After every storm" },
+            { t: 55, l: "Glass city rain" },
+            { t: 58, l: "Falling through the frame" },
+            { t: 61, l: "Two silhouettes remain" },
+            { t: 65, l: "Finding their way home" },
+            { t: 71, l: "" },
+            { t: 72, l: "Umbrellas bloom like flowers" },
+            { t: 76, l: "We spend the cloudy hours" },
+            { t: 80, l: "In the café on the corner" },
+            { t: 84, l: "Two cups warm against the border" },
+            { t: 89, l: "Of everything unspoken yet" },
+            { t: 93, l: "These are the things I won't forget" },
+            { t: 98, l: "" },
+            { t: 99, l: "🌧️ Glass city rain" },
+            { t: 102, l: "Washing clean our names" },
+            { t: 105, l: "We are never the same" },
+            { t: 108, l: "After every storm" },
+            { t: 112, l: "Glass city rain" },
+            { t: 115, l: "Falling through the frame" },
+            { t: 118, l: "Two silhouettes remain" },
+            { t: 122, l: "Finding their way home" },
+            { t: 128, l: "" },
+            { t: 129, l: "♩ Saxophone solo..." },
+            { t: 160, l: "" },
+            { t: 161, l: "The city breathes between the drops" },
+            { t: 165, l: "Time blurs and finally stops" },
+            { t: 169, l: "And here beside you in the wet" },
+            { t: 173, l: "I am the happiest I've been yet" },
+            { t: 179, l: "" },
+            { t: 180, l: "🌧️ Glass city rain (final chorus)" },
+            { t: 183, l: "Washing clean our names" },
+            { t: 186, l: "We are never the same" },
+            { t: 189, l: "After every storm" },
+            { t: 193, l: "Glass city rain" },
+            { t: 196, l: "Falling through the frame" },
+            { t: 199, l: "Two silhouettes remain" },
+            { t: 203, l: "Finding their way... home" },
+            { t: 210, l: "" },
+          ],
+        },
+        {
+          title: "Midnight Circuit",
+          artist: "VOLTA",
+          album: "Binary Dreams",
+          emoji: "⚡",
+          gradient: ["#facc15", "#f97316"],
+          duration: 165,
+          lyrics: [
+            { t: 0, l: "♩ Hard synth intro..." },
+            { t: 4, l: "Systems online at midnight" },
+            { t: 8, l: "Running on electric light" },
+            { t: 12, l: "Binary code in my bloodstream" },
+            { t: 16, l: "Everything is not what it seems" },
+            { t: 21, l: "" },
+            { t: 22, l: "Voltage rising through the circuit" },
+            { t: 26, l: "Push it til we nearly break it" },
+            { t: 30, l: "Overclocked and overheated" },
+            { t: 34, l: "Every warning signal needed" },
+            { t: 39, l: "" },
+            { t: 40, l: "⚡ Midnight circuit" },
+            { t: 43, l: "Burning through the wire" },
+            { t: 46, l: "Midnight circuit" },
+            { t: 49, l: "Setting world on fire" },
+            { t: 53, l: "We are the current" },
+            { t: 56, l: "We will never stop" },
+            { t: 59, l: "Running at the speed of" },
+            { t: 62, l: "Everything we've got" },
+            { t: 67, l: "" },
+            { t: 68, l: "Digital pulse transmitting" },
+            { t: 72, l: "Frequencies worth living" },
+            { t: 76, l: "Overloaded, underrated" },
+            { t: 80, l: "Beautiful when activated" },
+            { t: 85, l: "" },
+            { t: 86, l: "⚡ Midnight circuit" },
+            { t: 89, l: "Burning through the wire" },
+            { t: 92, l: "Midnight circuit" },
+            { t: 95, l: "Setting world on fire" },
+            { t: 99, l: "We are the current" },
+            { t: 102, l: "We will never stop" },
+            { t: 105, l: "Running at the speed of" },
+            { t: 108, l: "Everything we've got" },
+            { t: 114, l: "" },
+            { t: 115, l: "♩ Drop — bass and percussion only..." },
+            { t: 135, l: "" },
+            { t: 136, l: "When the grid goes dark tonight" },
+            { t: 140, l: "We will be the only light" },
+            { t: 144, l: "Charged and ready, standing tall" },
+            { t: 148, l: "We will never fall" },
+            { t: 154, l: "" },
+            { t: 155, l: "⚡ Final circuit — maximum power!" },
+            { t: 158, l: "Burning through the wire" },
+            { t: 161, l: "Setting world... ON FIRE" },
+            { t: 165, l: "" },
+          ],
+        },
+      ];
+      const state = {
+        idx: 0,
+        playing: false,
+        shuffle: false,
+        repeat: false,
+        volume: 0.8,
+        simOffset: 0,
+        simStart: null,
+        raf: null,
+      };
+      const audio = document.getElementById("audio");
+      const uploadInput = document.getElementById("song-upload");
+      const uploadBtn = document.getElementById("upload-btn");
+      const bgCanvas = document.getElementById("bg-canvas");
+      const bgCtx = bgCanvas.getContext("2d");
+      let bgW, bgH, blobs;
+      function randomBlob(w, h, colors) {
+        return {
+          x: Math.random() * w,
+          y: Math.random() * h,
+          r: 200 + Math.random() * 300,
+          vx: (Math.random() - 0.5) * 0.3,
+          vy: (Math.random() - 0.5) * 0.3,
+          color: colors[Math.floor(Math.random() * colors.length)],
+        };
+      }
+      function initBg() {
+        bgW = bgCanvas.width = window.innerWidth;
+        bgH = bgCanvas.height = window.innerHeight;
+        blobs = Array.from({ length: 5 }, () =>
+          randomBlob(bgW, bgH, SONGS[state.idx].gradient),
+        );
+      }
+      function hexAlpha(hex, a) {
+        const r = parseInt(hex.slice(1, 3), 16),
+          g = parseInt(hex.slice(3, 5), 16),
+          b = parseInt(hex.slice(5, 7), 16);
+        return `rgba(${r},${g},${b},${a})`;
+      }
+      function animateBg() {
+        bgCtx.clearRect(0, 0, bgW, bgH);
+        const isDark = document.documentElement.dataset.theme !== "light";
+        bgCtx.fillStyle = isDark ? "#0a0a0f" : "#f4f3ff";
+        bgCtx.fillRect(0, 0, bgW, bgH);
+        blobs.forEach((b) => {
+          b.x += b.vx;
+          b.y += b.vy;
+          if (b.x < -b.r) b.x = bgW + b.r;
+          if (b.x > bgW + b.r) b.x = -b.r;
+          if (b.y < -b.r) b.y = bgH + b.r;
+          if (b.y > bgH + b.r) b.y = -b.r;
+          const g = bgCtx.createRadialGradient(b.x, b.y, 0, b.x, b.y, b.r);
+          g.addColorStop(0, hexAlpha(b.color, isDark ? 0.18 : 0.12));
+          g.addColorStop(1, "transparent");
+          bgCtx.fillStyle = g;
+          bgCtx.fillRect(0, 0, bgW, bgH);
+        });
+        requestAnimationFrame(animateBg);
+      }
+      window.addEventListener("resize", initBg);
+      initBg();
+      animateBg();
+      const waveEl = document.getElementById("waveform");
+      for (let i = 0; i < 32; i++) {
+        const b = document.createElement("div");
+        b.className = "bar";
+        b.style.animationDelay = `${(Math.random() * 1.2).toFixed(2)}s`;
+        b.style.animationDuration = `${(0.8 + Math.random() * 0.8).toFixed(2)}s`;
+        waveEl.appendChild(b);
+      }
+      function setWave(playing) {
+        waveEl.classList.toggle("idle", !playing);
+      }
+      function formatTime(s) {
+        if (!isFinite(s)) return "0:00";
+        s = Math.floor(s);
+        return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0");
+      }
+      function buildPlaylist() {
+        const pl = document.getElementById("playlist");
+        pl.innerHTML = "";
+        SONGS.forEach((s, i) => {
+          const dur = s.duration,
+            m = Math.floor(dur / 60),
+            sec = String(dur % 60).padStart(2, "0");
+          const item = document.createElement("div");
+          item.className = "playlist-item" + (i === state.idx ? " active" : "");
+          item.dataset.idx = i;
+          item.innerHTML = `<div class="playlist-thumb" style="background:linear-gradient(135deg,${s.gradient[0]},${s.gradient[1]})">${s.emoji}</div><div class="playlist-info"><div class="playlist-title">${s.title}</div><div class="playlist-artist">${s.artist}</div></div><span class="pl-dur">${m}:${sec}</span>`;
+          item.addEventListener("click", () => loadSong(i, true));
+          pl.appendChild(item);
+        });
+      }
+      function buildLyrics() {
+        const c = document.getElementById("lyrics-container");
+        const song = SONGS[state.idx];
+        const lyricLines = song.lyrics.filter((line) => line.l.trim() !== "");
+        c.innerHTML = "";
+        if (!lyricLines.length) {
+          c.innerHTML =
+            '<p class="no-lyrics">Lyrics not available for this song.</p>';
+          return;
+        }
+        lyricLines.forEach((line, i) => {
+          const div = document.createElement("div");
+          div.className = "lyric-line";
+          div.dataset.idx = i;
+          div.dataset.t = line.t;
+          div.textContent = line.l;
+          c.appendChild(div);
+        });
+      }
+      function showLyricsOnPlay() {
+        const c = document.getElementById("lyrics-container");
+        const lyricLines = SONGS[state.idx].lyrics.filter(
+          (line) => line.l.trim() !== "",
+        );
+        if (!lyricLines.length) {
+          c.innerHTML =
+            '<p class="no-lyrics">Lyrics not available for this song.</p>';
+          return;
+        }
+        const lines = c.querySelectorAll(".lyric-line");
+        lines.forEach((d, i) => {
+          d.classList.remove("active", "past");
+          if (i === 0) d.classList.add("active");
+        });
+        c.scrollTo({ top: 0, behavior: "smooth" });
+      }
+      function updateLyrics(curTime) {
+        const lines = SONGS[state.idx].lyrics.filter((l) => l.l !== "");
+        let activeIdx = -1;
+        for (let i = 0; i < lines.length; i++) {
+          if (curTime >= lines[i].t) activeIdx = i;
+        }
+        document.querySelectorAll(".lyric-line").forEach((d, i) => {
+          d.classList.remove("active", "past");
+          if (i === activeIdx) {
+            d.classList.add("active");
+            d.scrollIntoView({ block: "center", behavior: "smooth" });
+          } else if (i < activeIdx) {
+            d.classList.add("past");
+          }
+        });
+      }
+      function simCurrentTime() {
+        if (!state.playing) return state.simOffset;
+        return Math.min(
+          state.simOffset + (performance.now() - state.simStart) / 1000,
+          SONGS[state.idx].duration,
+        );
+      }
+      function simPlay() {
+        state.simStart = performance.now();
+      }
+      function simPause() {
+        state.simOffset = simCurrentTime();
+      }
+      function simSeek(t) {
+        state.simOffset = t;
+        if (state.playing) state.simStart = performance.now();
+      }
+      function updatePlayBtn() {
+        document.getElementById("play-btn").innerHTML = state.playing
+          ? "&#9646;&#9646;"
+          : "&#9654;";
+      }
+      function loadSong(idx, autoplay = false) {
+        state.idx = idx;
+        state.simOffset = 0;
+        state.simStart = null;
+        const song = SONGS[idx];
+        document.getElementById("song-title").textContent = song.title;
+        document.getElementById("song-artist").textContent = song.artist;
+        document.getElementById("song-album").textContent = song.album;
+        document.getElementById("album-emoji").textContent = song.emoji;
+        const artEl = document.getElementById("album-art");
+        artEl.style.background = `linear-gradient(135deg,${song.gradient[0]},${song.gradient[1]})`;
+        document.getElementById("tot-time").textContent = formatTime(
+          song.duration,
+        );
+        document.getElementById("progress").value = 0;
+        document.getElementById("progress").style.setProperty("--prog", "0%");
+        buildLyrics();
+        buildPlaylist();
+        blobs.forEach((b, i) => {
+          b.color = song.gradient[i % song.gradient.length];
+        });
+        if (song.audioUrl) {
+          audio.src = song.audioUrl;
+          audio.load();
+          if (autoplay) {
+            state.playing = true;
+            updatePlayBtn();
+            setWave(true);
+            artEl.classList.add("spinning");
+            showLyricsOnPlay();
+            audio.play();
+          }
+        } else {
+          if (autoplay) {
+            state.playing = true;
+            simPlay();
+            updatePlayBtn();
+            setWave(true);
+            artEl.classList.add("spinning");
+            showLyricsOnPlay();
+          } else {
+            showLyricsOnPlay();
+          }
+        }
+      }
+      function handleNext() {
+        let newIdx = state.shuffle
+          ? Math.floor(Math.random() * SONGS.length)
+          : (state.idx + 1) % SONGS.length;
+        loadSong(newIdx, true);
+      }
+      function tick() {
+        if (SONGS[state.idx].audioUrl) {
+          const cur = audio.currentTime || 0;
+          const dur = audio.duration || 1;
+          const pct = (cur / dur) * 100 || 0;
+          document.getElementById("progress").value = pct;
+          document
+            .getElementById("progress")
+            .style.setProperty("--prog", pct.toFixed(1) + "%");
+          document.getElementById("cur-time").textContent = formatTime(cur);
+          updateLyrics(cur);
+          if (cur >= dur && state.playing) handleNext();
+        } else {
+          const cur = simCurrentTime();
+          const dur = SONGS[state.idx].duration;
+          const pct = (cur / dur) * 100;
+          document.getElementById("progress").value = pct;
+          document
+            .getElementById("progress")
+            .style.setProperty("--prog", pct.toFixed(1) + "%");
+          document.getElementById("cur-time").textContent = formatTime(cur);
+          updateLyrics(cur);
+          if (cur >= dur && state.playing) {
+            if (state.repeat) simSeek(0);
+            else handleNext();
+          }
+        }
+        state.raf = requestAnimationFrame(tick);
+      }
+      function syncVolumeUI(v) {
+        document.getElementById("volume").style.setProperty("--vol", v + "%");
+        document.getElementById("vol-val").textContent = v;
+        document.getElementById("vol-icon").innerHTML =
+          v === 0 ? "&#128264;" : v < 40 ? "&#128265;" : "&#128266;";
+      }
+      document.getElementById("play-btn").addEventListener("click", () => {
+        const song = SONGS[state.idx];
+        state.playing = !state.playing;
+        const artEl = document.getElementById("album-art");
+        if (song.audioUrl) {
+          if (state.playing) {
+            showLyricsOnPlay();
+            audio.play();
+            artEl.classList.add("spinning");
+          } else {
+            audio.pause();
+            artEl.classList.remove("spinning");
+          }
+        } else {
+          if (state.playing) {
+            simPlay();
+            showLyricsOnPlay();
+            artEl.classList.add("spinning");
+          } else {
+            simPause();
+            artEl.classList.remove("spinning");
+          }
+        }
+        updatePlayBtn();
+        setWave(state.playing);
+        if (state.playing && !state.raf)
+          state.raf = requestAnimationFrame(tick);
+      });
+      document.getElementById("prev-btn").addEventListener("click", () => {
+        if (SONGS[state.idx].audioUrl) {
+          if (audio.currentTime > 3) audio.currentTime = 0;
+          else loadSong((state.idx - 1 + SONGS.length) % SONGS.length, true);
+        } else {
+          if (simCurrentTime() > 3) simSeek(0);
+          else
+            loadSong(
+              (state.idx - 1 + SONGS.length) % SONGS.length,
+              state.playing,
+            );
+        }
+      });
+      document.getElementById("next-btn").addEventListener("click", handleNext);
+      document
+        .getElementById("shuffle-btn")
+        .addEventListener("click", function () {
+          state.shuffle = !state.shuffle;
+          this.classList.toggle("active-mode", state.shuffle);
+        });
+      document
+        .getElementById("repeat-btn")
+        .addEventListener("click", function () {
+          state.repeat = !state.repeat;
+          this.classList.toggle("active-mode", state.repeat);
+        });
+      document
+        .getElementById("progress")
+        .addEventListener("input", function () {
+          const pct = parseFloat(this.value);
+          const song = SONGS[state.idx];
+          if (song.audioUrl && isFinite(audio.duration)) {
+            audio.currentTime = (pct / 100) * audio.duration;
+          } else if (!song.audioUrl) {
+            const t = (pct / 100) * song.duration;
+            simSeek(t);
+            updateLyrics(t);
+          }
+          this.style.setProperty("--prog", pct.toFixed(1) + "%");
+        });
+      document.getElementById("volume").addEventListener("input", function () {
+        const v = parseInt(this.value);
+        state.volume = v / 100;
+        syncVolumeUI(v);
+        if (SONGS[state.idx].audioUrl) audio.volume = state.volume;
+      });
+      document.getElementById("theme-btn").addEventListener("click", () => {
+        const html = document.documentElement;
+        html.dataset.theme = html.dataset.theme === "dark" ? "light" : "dark";
+        document.getElementById("theme-btn").innerHTML =
+          html.dataset.theme === "dark" ? "&#9788;" : "&#9790;";
+      });
+      document.querySelectorAll(".tab-btn").forEach((btn) => {
+        btn.addEventListener("click", function () {
+          document
+            .querySelectorAll(".tab-btn")
+            .forEach((b) => b.classList.remove("active"));
+          this.classList.add("active");
+          const tab = this.dataset.tab;
+          document.getElementById("player-col").style.display =
+            tab === "player" ? "" : "none";
+          const lyricsCol = document.getElementById("lyrics-col");
+          const sidebar = document.getElementById("sidebar");
+          lyricsCol.style.display = tab === "lyrics" ? "block" : "";
+          sidebar.style.display = tab === "playlist" ? "block" : "";
+          if (window.innerWidth <= 1024) {
+            if (tab !== "player")
+              document.getElementById("player-col").style.display = "none";
+            if (tab !== "lyrics") lyricsCol.style.display = "none";
+            if (tab !== "playlist") sidebar.style.display = "none";
+            if (tab === "player")
+              document.getElementById("player-col").style.display = "";
+            if (tab === "lyrics") lyricsCol.style.display = "block";
+            if (tab === "playlist") sidebar.style.display = "block";
+          }
+        });
+      });
+      uploadBtn.addEventListener("click", () => uploadInput.click());
+      uploadInput.addEventListener("change", () => {
+        const files = [...(uploadInput.files || [])];
+        if (!files.length) return;
+        files.forEach((file) => {
+          const url = URL.createObjectURL(file);
+          SONGS.push({
+            title: file.name.replace(/\.[^/.]+$/, ""),
+            artist: "Uploaded song",
+            album: "Local file",
+            emoji: "🎵",
+            gradient: ["#a78bfa", "#60a5fa"],
+            duration: 0,
+            lyrics: [],
+            audioUrl: url,
+            uploaded: true,
+          });
+        });
+        buildPlaylist();
+        uploadInput.value = "";
+        loadSong(SONGS.length - files.length, true);
+      });
+      audio.addEventListener("loadedmetadata", () => {
+        document.getElementById("tot-time").textContent = formatTime(
+          audio.duration,
+        );
+      });
+      audio.addEventListener("timeupdate", () => {
+        if (SONGS[state.idx].audioUrl) {
+          const cur = audio.currentTime || 0;
+          const dur = audio.duration || 1;
+          const pct = (cur / dur) * 100 || 0;
+          document.getElementById("progress").value = pct;
+          document
+            .getElementById("progress")
+            .style.setProperty("--prog", pct.toFixed(1) + "%");
+          document.getElementById("cur-time").textContent = formatTime(cur);
+          updateLyrics(cur);
+        }
+      });
+      audio.addEventListener("ended", () => handleNext());
+      loadSong(0, false);
+      state.raf = requestAnimationFrame(tick);
+      syncVolumeUI(80);
+      audio.volume = state.volume;
+    </script>
+  </body>
+</html>
